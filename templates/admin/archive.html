@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Archived Bookings - Nami Hotel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../static/css-admin/archive.css">
+  <style>
+    .bg-orange {
+      background-color: #ff7f00;
+    }
+    #sidebar a.nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebar" class="bg-orange text-white p-3 vh-100" style="width: 250px; position: fixed; transition: all 0.3s;">
+      <h4 class="mb-4">Archived Bookings</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="/admin_dashboard" class="nav-link text-white">Dashboard</a></li>
+        <li class="nav-item mb-2"><a href="/archive" class="nav-link text-white">Archive</a></li>
+        <li class="nav-item mb-2"><a href="/manage_rooms" class="nav-link text-white">Manage Rooms</a></li>
+        <li class="nav-item mb-2"><a href="/admin_rooms_available" class="nav-link text-white">Available Rooms</a></li>
+        <li class="nav-item mt-4"><a href="/logout" class="btn btn-light text-dark w-100">EXIT</a></li>
+      </ul>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content" class="flex-grow-1 ms-auto" style="margin-left: 250px; transition: all 0.3s;">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg bg-orange fixed-top" style="z-index: 1030;">
+      <div class="container-fluid d-flex justify-content-between align-items-center px-3">
+        <h4 class="text-white mb-0">Archived Bookings</h4>
+        <button class="btn btn-light" id="toggleSidebar">☰</button>
+      </div>
+    </nav>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'success' and message == 'Booking archived successfully!' %}
+            <script>
+              window.addEventListener('DOMContentLoaded', () => {
+                const successModal = new bootstrap.Modal(document.getElementById('archiveSuccessModal'));
+                successModal.show();
+              });
+            </script>
+          {% else %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show m-3" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <div class="modal fade" id="updateSuccessModal" tabindex="-1" aria-labelledby="updateSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-success">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="updateSuccessModalLabel">Success</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-success">
+              Booking status updated successfully!
+            </div>
+          </div>
+        </div>
+      </div>
+      <form method="GET" action="{{ url_for('archive') }}" class="search-form m-3 d-flex gap-2">
+        <input type="text" name="search" class="form-control" placeholder="Search by Name, Room, Status" value="{{ search_query or '' }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{{ url_for('archive') }}" class="btn btn-secondary">Reset</a>
+    </form>
+
+    <main>  
+        <section class="management">
+            <h2>Archived Bookings</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer</th>
+                            <th>Room Type</th>
+                            <th>Room Number</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Guests</th>
+                            <th>Rooms</th>
+                            <th>Status</th>
+                            <th>Extra Mattress</th>
+                            <th>Extra Pillow</th>
+                            <th>Extra Towel</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if bookings %}
+                            {% for booking in bookings %}
+                            <tr>
+                                <td>{{ booking.booking_id }}</td>
+                                <td>{{ booking.first_name }} {{ booking.last_name }}</td>
+                                <td>{{ booking.room_name }}</td>
+                                <td>{{ booking.room_number }}</td>
+                                <td>{{ booking.check_in }}</td>
+                                <td>{{ booking.check_out }}</td>
+                                <td>{{ booking.guests }}</td>
+                                <td>{{ booking.num_rooms }}</td>
+                                <td>{{ booking.status }}</td>
+                                <td>{% if booking.extra_mattress|int == 1 %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                                <td>{% if booking.extra_pillow|int == 1 %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                                <td>{% if booking.extra_towel|int == 1 %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                                <td>{{ booking.total_amount }}</td>
+                                <td>
+                                  <!-- Restore Form -->
+                                  <form action="{{ url_for('restore_booking') }}" method="POST" style="display:inline;">
+                                      <input type="hidden" name="archived_booking_id" value="{{ booking.archived_booking_id }}">
+                                      <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                                  </form>
+                              
+                                  <!-- Delete Form -->
+                                  <form action="{{ url_for('delete_archived_booking') }}" method="POST" style="display:inline;">
+                                      <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
+                                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                  </form>
+                              </td>
+                              
+                                
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9">No archived bookings found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <nav aria-label="Archive pagination" class="d-flex justify-content-center mt-4">
+                  <ul class="pagination">
+                    {% if page > 1 %}
+                      <li class="page-item">
+                        <a class="page-link" href="{{ url_for('archive', page=page-1, search=search_query) }}">Previous</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+                
+                    {% for p in range(1, total_pages + 1) %}
+                      <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('archive', page=p, search=search_query) }}">{{ p }}</a>
+                      </li>
+                    {% endfor %}
+                
+                    {% if page < total_pages %}
+                      <li class="page-item">
+                        <a class="page-link" href="{{ url_for('archive', page=page+1, search=search_query) }}">Next</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                  </ul>
+                </nav> 
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Nami Hotel. All rights reserved.</p>
+    </footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('toggleSidebar').addEventListener('click', function () {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('page-content');
+      if (sidebar.style.marginLeft === '-250px') {
+        sidebar.style.marginLeft = '0';
+        content.style.marginLeft = '250px';
+      } else {
+        sidebar.style.marginLeft = '-250px';
+        content.style.marginLeft = '0';
+      }
+    });
+
+    if (window.innerWidth < 768) {
+      document.getElementById('sidebar').style.marginLeft = '-250px';
+      document.getElementById('page-content').style.marginLeft = '0';
+    }
+  </script>
+
+</html>

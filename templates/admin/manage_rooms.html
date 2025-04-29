@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Management - Nami Hotel</title>
+    <link rel="stylesheet" href="../../static/css-admin/manage_rooms.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .bg-orange {
+          background-color: #ff7f00;
+        }
+        #sidebar a.nav-link:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+        }
+      </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div id="sidebar" class="bg-orange text-white p-3 vh-100" style="width: 250px; position: fixed; transition: all 0.3s;">
+      <h4 class="mb-4">Manage Rooms</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2"><a href="/admin_dashboard" class="nav-link text-white">Dashboard</a></li>
+        <li class="nav-item mb-2"><a href="/archive" class="nav-link text-white">Archive</a></li>
+        <li class="nav-item mb-2"><a href="/manage_rooms" class="nav-link text-white">Manage Rooms</a></li>
+        <li class="nav-item mb-2"><a href="/admin_rooms_available" class="nav-link text-white">Available Rooms</a></li>
+        <li class="nav-item mt-4"><a href="/logout" class="btn btn-light text-dark w-100">EXIT</a></li>
+      </ul>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content" class="flex-grow-1 ms-auto" style="margin-left: 250px; transition: all 0.3s;">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg bg-orange fixed-top" style="z-index: 1030;">
+      <div class="container-fluid d-flex justify-content-between align-items-center px-3">
+        <h4 class="text-white mb-0">Manage Rooms</h4>
+        <button class="btn btn-light" id="toggleSidebar">☰</button>
+      </div>
+    </nav>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'success' and message == 'Booking archived successfully!' %}
+            <script>
+              window.addEventListener('DOMContentLoaded', () => {
+                const successModal = new bootstrap.Modal(document.getElementById('archiveSuccessModal'));
+                successModal.show();
+              });
+            </script>
+          {% else %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show m-3" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      {% if update_success %}
+      <script>
+        window.addEventListener('DOMContentLoaded', () => {
+          const updateSuccessModal = new bootstrap.Modal(document.getElementById('updateSuccessModal'));
+          updateSuccessModal.show();
+        });
+      </script>
+      {% endif %}
+
+    <main>
+        <section class="management">
+            <div class="management-header">
+                <h2></h2>
+                <a href="#add-room" class="add-room-btn">Add New Room</a>
+            </div>
+
+            
+            <div class="rooms-grid">
+                <!-- Rooms -->
+                {% for room in rooms %}
+                <div class="room-card">
+                    <div class="room-image">
+                        <img src="{{ url_for('static', filename='rooms_images/' + room.image_url) }}" alt="{{ room.room_name }}">
+                        <span class="status type">{{ room.room_type }}</span>
+                        <div class="room-actions">
+                            <a href="#editRoom{{ loop.index }}" class="edit-btn">Edit</a>
+                            <a href="#deleteRoom{{ loop.index }}" class="delete-btn">Delete</a>
+                        </div>
+                    </div>
+                    <div class="room-info">
+                        <h3>{{ room.room_name }}</h3>
+                        <p class="room-number">Total Rooms: {{ room.total_rooms }}</p>
+                        <div class="room-details">
+                            <span>{{ room.description }}</span>
+                        </div>
+                        <div class="room-price">
+                            <span class="price">Php {{ room.price }}</span>
+                            <span class="per-night">per night</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Edit Modal -->
+                <div id="editRoom{{ loop.index }}" class="modal">
+                    <div class="modal-content">
+                        <a href="#" class="close">&times;</a>
+                        <h2>Edit {{ room.room_name }}</h2>
+                        <form action="/edit-rooms/{{ room.room_id }}" method="POST" class="room-form" enctype="multipart/form-data">
+                            <div class="image-upload">
+                                <div class="image-preview">
+                                    <img id="previewImage{{ room.room_id }}" src="{{ url_for('static', filename='rooms_images/' + room.image_url) }}" alt="{{ room.room_name }}">
+                                </div>
+                                <label for="editRoomImage{{ room.room_id }}" class="change-image-btn">
+                                    Change Picture
+                                    <input type="file" id="editRoomImage{{ room.room_id }}" name="editRoomImage" accept="image/*" onchange="previewImage(event, '{{ room.room_id }}')">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="roomName">Room Number</label>
+                                <input type="text" id="roomName" name="roomName" value="{{ room.room_name }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalRooms">Room Number</label>
+                                <input type="text" id="totalRooms" name="totalRooms" value="{{ room.total_rooms }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editRoomType">Room Type</label>
+                                <select id="editRoomTpye" name="editRoomTpye" required>
+                                    {% for room_type in ['Luxury', 'Deluxe', 'Standard'] %}
+                                    <option value="{{ room_type }}" {% if room.room_type == room_type %} selected {% endif %}> {{ room_type }} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price per Night</label>
+                                <input type="number" id="price" name="price" value="{{ room.price }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" id="description" name="description" value="{{ room.description }}" required>
+                            </div>
+                            <button type="submit" class="submit-btn">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            
+                <!-- Delete Confirmation Modals -->
+                <div id="deleteRoom{{ loop.index }}" class="modal">
+                    <div class="modal-content modal-sm">
+                        <a href="#" class="close">&times;</a>
+                        <h2>Delete Room</h2>
+                        <p class="confirm-message">Are you sure you want to delete Room?</p>
+                        <div class="modal-actions">
+                            <a href="#" class="cancel-btn">Cancel</a>
+                            <a href="/delete-rooms/{{ room.room_id }}" class="delete-confirm-btn">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Add New Room Modal -->
+            <div id="add-room" class="modal">
+                <div class="modal-content">
+                    <a href="#" class="close">&times;</a>
+                    <h2>Add New Room</h2>
+                    <form action="/add-rooms" method="POST" class="room-form" enctype="multipart/form-data">
+                        <div class="image-upload">
+                            <div class="image-preview">
+                                <img id="previewImage" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800" alt="Room Preview">
+                            </div>
+                            <label for="roomImage" class="change-image-btn">
+                                Change Picture
+                                <input type="file" id="roomImage" name="roomImage" accept="image/*" required>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="roomName">Room Name</label>
+                            <input type="text" id="roomName" name="roomName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalRooms">Total Rooms</label>
+                            <input type="number" id="totalRooms" name="totalRooms" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="roomType">Room Type</label>
+                            <select id="roomType" name="roomType" required>
+                                <option value="Luxury">Luxury</option>
+                                <option value="Deluxe">Deluxe</option>
+                                <option value="Standard">Standard</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price per Night</label>
+                            <input type="number" id="price" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" id="description" name="description" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Add Room</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        function previewImage(event, roomId) {
+          const reader = new FileReader();
+          reader.onload = function () {
+            document.getElementById("previewImage" + roomId).src = reader.result;
+          };
+          reader.readAsDataURL(event.target.files[0]);
+        }
+      </script>
+      
+
+    <footer>
+        <p>&copy; 2025 Nami Hotel. All rights reserved.</p>
+    </footer>
+</body>
+<script>
+    document.getElementById("roomImage").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => document.getElementById("previewImage").src = e.target.result;
+            reader.readAsDataURL(file);
+        }
+    });
+    const modal = document.getElementById('roomModal');
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('toggleSidebar').addEventListener('click', function () {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('page-content');
+      if (sidebar.style.marginLeft === '-250px') {
+        sidebar.style.marginLeft = '0';
+        content.style.marginLeft = '250px';
+      } else {
+        sidebar.style.marginLeft = '-250px';
+        content.style.marginLeft = '0';
+      }
+    });
+
+    if (window.innerWidth < 768) {
+      document.getElementById('sidebar').style.marginLeft = '-250px';
+      document.getElementById('page-content').style.marginLeft = '0';
+    }
+  </script>
+
+</html>

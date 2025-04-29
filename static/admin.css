@@ -1,0 +1,277 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --primary: #df6819;
+    --primary-dark: #a5310b;
+    --primary-light: #f04f14;
+    --secondary: #ffffff;
+    --accent: #9e2301;
+    --background: #fff5f2;
+    --text: #2d2d2d;
+    --border: #ffe0d6;
+    --card-shadow: 0 4px 6px rgba(255, 107, 53, 0.1);
+    --hover-shadow: 0 8px 15px rgba(255, 107, 53, 0.2);
+  }
+  
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    padding: 1.5rem 2.5rem;
+    color: white;
+    box-shadow: var(--card-shadow);
+  }
+  
+  header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  nav a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  nav a:hover, nav a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .logout-btn {
+    background: white;
+    color: var(--primary);
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+  }
+  
+  main {
+    flex: 1;
+    padding: 2rem;
+    margin-top: 1rem;
+  }
+  
+  .management {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    transition: all 0.3s ease;
+  }
+  
+  .management:hover {
+    box-shadow: var(--hover-shadow);
+  }
+  
+  .management h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-light);
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+  }
+  
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  th {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  
+  th:first-child {
+    border-top-left-radius: 8px;
+  }
+  
+  th:last-child {
+    border-top-right-radius: 8px;
+  }
+  
+  tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+  }
+  
+  tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+  }
+  
+  tbody tr {
+    transition: all 0.3s ease;
+  }
+  
+  tbody tr:hover {
+    background: var(--background);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(255, 107, 53, 0.1);
+  }
+  
+  .status-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .status-select {
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+  
+  .status-select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+  }
+  
+  .update-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .update-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--card-shadow);
+  }
+  
+  footer {
+    background: var(--primary);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+  
+    nav ul {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+  
+    nav a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+  
+    main {
+        padding: 1rem;
+    }
+  
+    .management {
+        padding: 1rem;
+    }
+  
+    th, td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+  
+    .status-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }
+  
+  .management {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+  }

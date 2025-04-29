@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='loginstyle.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/">
+                <img src="../static/rooms_images/logo.png" alt="Nami Hub Logo" id="nami-logo" loading="lazy" >
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/rooms">Rooms</a></li>
+
+                {% if session.user_id %}
+                    <li><a href="/dashboard" class="btn">Welcome, {{ session.first_name }}</a></li>
+                    <li><a href="/logout" class="btn logout-btn">Logout</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Login</a></li>
+                    <li><a href="/signup" class="btn signup-btn">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Bootstrap Modal for Flash Messages -->
+    <div class="modal fade" id="flashMessageModal" tabindex="-1" aria-labelledby="flashMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="flashMessageModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <form class="login-form" method="POST"> <!-- Added method="POST" -->
+            <h2>Login to Your Account</h2>
+
+            <label for="email">Email</label>
+            <input type="text" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <div style="position: relative;">
+              <input type="password" id="password" name="password" placeholder="Enter your password" required style="padding-right: 40px;">
+              <i id="toggle-password" class="fas fa-eye" onclick="togglePasswordVisibility()" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;"></i>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+
+            <p class="signup-link">Don't have an account? <a href="/signup">Sign up here</a></p>
+        </form>
+    </div>
+
+    <footer>
+        &copy; 2025 Your Company. All Rights Reserved.
+    </footer>
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-password');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.remove("fa-eye");
+                toggleIcon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.remove("fa-eye-slash");
+                toggleIcon.classList.add("fa-eye");
+            }
+        }
+        </script>
+    <script>
+        // Automatically show the modal if there are flash messages
+        document.addEventListener("DOMContentLoaded", function () {
+            var flashMessageModal = document.getElementById('flashMessageModal');
+            if (flashMessageModal.querySelector(".alert")) {
+                var modal = new bootstrap.Modal(flashMessageModal);
+                modal.show();
+            }
+        });
+    </script>
+
+</body>
+</html>

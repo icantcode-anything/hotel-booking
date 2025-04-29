@@ -1,0 +1,92 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #333;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #fff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container img {
+    height: 150px;
+    max-width: 150px;
+    display: block;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ff6600;
+}
+
+/* Buttons */
+.btn {
+    background: #ff6600;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #cc5500;
+}
+
+.signup-btn {
+    background: transparent;
+    color: #ff6600;
+    border: 1px solid #ff6600;
+}
+
+.signup-btn:hover {
+    background: #ff6600;
+    color: white;
+}
+
+/* Map Section */
+.map-container {
+    text-align: center;
+    margin: 50px auto;
+    width: 80%;
+}
+
+.map-container h1 {
+    color: #ff6600;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #ff6600;
+    color: white;
+    margin-top: 50px;
+}

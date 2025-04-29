@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ room.room_name }} - Nami Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css-users/bookings.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="../static/rooms_images/logo.png" alt="{{ room.room_name }}" width="100">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/rooms">Rooms</a></li>
+                {% if session.user_id %}
+                    <li><a href="/dashboard" class="btn">Welcome, {{ session.first_name }}</a></li>
+                    <li><a href="/logout" class="btn logout-btn">Logout</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn-login">Login</a></li>
+                    <li><a href="/signup" class="btn-signup">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="room-details">
+            <h1 class="text-center">{{ room.room_name }}</h1>
+
+            <!-- Bootstrap Carousel -->
+            <div class="left-section">
+                <div class="carousel">
+                    <div class="carousel-inner">
+                        <img src="{{ url_for('static', filename='rooms_images/' + room.image_url) }}" alt="{{ room.room_name }}" class="active">
+                    </div>
+                </div>
+                <div class="room-info">
+                    <div class="price">
+                        <span class="amount">{{ room.price }}</span>
+                        <span class="per-night">per night</span>
+                    </div>
+                    <div class="amenities">
+                        <span>Free WiFi</span>
+                        <span>Room Service</span>
+                        <span>24/7 Concierge</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Booking -->
+            <form action="/book/{{ room.room_id }}" method="POST" class="booking-form" enctype="multipart/form-data">
+                <input type="hidden" name="category" value="{{ room.category }}">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="checkin">Check-in Date</label>
+                        <input type="date" id="checkin" name="check_in" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkout">Check-out Date</label>
+                        <input type="date" id="checkout" name="check_out">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="guests">Number of Guests</label>
+                        <input type="number" id="guests" name="guests" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rooms">Number of Rooms</label>
+                        <input type="number" id="rooms" name="num_rooms" min="1" max="{{ room.total_rooms }}" required>
+                    </div>
+                </div>
+
+                    <div class="form-group">
+                        <label for="room_number_id">Select Room Number:</label>
+                        <select name="room_number_id" class="form-control" required>
+                            {% for rn in rooms_available_numbers %}
+                                <option value="{{ rn.room_number_id }}">{{ rn.room_number }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Room Extras -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="extra_mattress" id="extra_mattress" value="Yes">
+                        <label class="form-check-label" for="extra_mattress">Extra Mattress (₱300/Per Night)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="extra_pillow" id="extra_pillow" value="Yes">
+                        <label class="form-check-label" for="extra_pillow">Extra Pillow (₱50/Per Night)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="extra_towel" id="extra_towel" value="Yes">
+                        <label class="form-check-label" for="extra_towel">Extra Towel (₱100/Per Night)</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="special_suggestion">Special Suggestion:</label>
+                        <textarea id="special_suggestion" name="special_suggestion" class="form-control" rows="3" placeholder="Enter your suggestions or special requests here...(Optional)"></textarea>
+                    </div>
+
+                    <input type="hidden" id="roomPrice" value="{{ room.price }}">
+
+
+                <!-- Proceed to Payment Button -->
+                <button type="button" class="btn btn-success mt-3" onclick="prepareBillingModal()" data-bs-toggle="modal" data-bs-target="#billingModal">
+                    Proceed to Payment
+                </button>
+
+                <!-- Billing Modal (includes Proof of Payment + Final Book button) -->
+                <div class="modal fade" id="billingModal" tabindex="-1" aria-labelledby="billingModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content rounded-3">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="billingModalLabel">Booking Summary</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="billingContent">
+                                <!-- Billing summary will be injected here by JavaScript -->
+                            </div>
+                            <img src="/static/css-admin/gcashqr.jpg" alt="GCash QR Code" style="width: 250px; height: auto; display: block; margin: 0 auto;">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="proof">Proof of Payment</label>
+                                    <input type="file" id="proof" name="proof_of_payment" class="form-control" accept="image/*" required>
+                                </div>
+                            </div>                            
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+    <script src="../static/js/bookings.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkIn = document.getElementById("checkin");
+            const checkOut = document.getElementById("checkout");
+
+            // Set minimum check-in date to today
+            let today = new Date().toISOString().split("T")[0];
+            checkIn.setAttribute("min", today);
+
+            // Set the minimum check-out date initially to the same as the check-in date
+            checkOut.setAttribute("min", today);
+
+            // Ensure check-out is after check-in when both are provided
+            checkIn.addEventListener("change", function () {
+                checkOut.value = ""; // Clear check-out date when check-in changes
+                checkOut.setAttribute("min", checkIn.value); // Update check-out minimum date
+            });
+
+            checkOut.addEventListener("change", function () {
+                // If check-out date is earlier than or equal to check-in date, reset the field
+                if (checkOut.value && checkOut.value <= checkIn.value) {
+                    alert("Check-out date must be after check-in date.");
+                    checkOut.value = ""; // Clear the invalid check-out date
+                    checkOut.setAttribute("min", checkIn.value); // Reset the minimum check-out date
+                }
+            });
+        });
+
+        function prepareBillingModal() {
+            const pricePerNight = parseFloat(document.getElementById('roomPrice').value);
+            const checkInDate = new Date(document.getElementById('checkin').value);
+            let checkOutDate = document.getElementById('checkout').value ? new Date(document.getElementById('checkout').value) : new Date();
+
+            const numRooms = parseInt(document.getElementById('rooms').value) || 1;
+
+            if (checkOutDate <= checkInDate) {
+                checkOutDate = new Date(checkInDate);
+                checkOutDate.setDate(checkOutDate.getDate() + 1); // Set check-out date to at least one day after check-in
+            }
+
+            const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+            if (nights <= 0) {
+                alert('Please select valid check-in and check-out dates.');
+                return;
+            }
+
+            const mattressCost = document.getElementById('extra_mattress').checked ? 300 * nights : 0;
+            const pillowCost = document.getElementById('extra_pillow').checked ? 50 * nights : 0;
+            const towelCost = document.getElementById('extra_towel').checked ? 100 * nights : 0;
+
+            const roomCost = pricePerNight * nights * numRooms;
+            const total = roomCost + mattressCost + pillowCost + towelCost;
+
+            const billingHTML = `
+                <p><strong>Stay Duration:</strong> ${nights} night(s)</p>
+                <p><strong>Rooms:</strong> ${numRooms} room(s)</p>
+                <p><strong>Room Cost:</strong> ₱${roomCost.toLocaleString()}</p>
+                <p><strong>Extras:</strong></p>
+                <ul>
+                    ${mattressCost ? `<li>Extra Mattress: ₱${mattressCost.toLocaleString()}</li>` : ''}
+                    ${pillowCost ? `<li>Extra Pillow: ₱${pillowCost.toLocaleString()}</li>` : ''}
+                    ${towelCost ? `<li>Extra Towel: ₱${towelCost.toLocaleString()}</li>` : ''}
+                </ul>
+                <hr>
+                <h5>Total: ₱${total.toLocaleString()}</h5>
+            `;
+
+            document.getElementById('billingContent').innerHTML = billingHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nami Hub | Services</title>
+    <link rel="stylesheet" href="{{url_for('static', filename = 'service_style.css')}}">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="/">
+                <img src="../static/rooms_images/logo.png" alt="Nami Hub Logo" id="nami-logo" loading="lazy">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/rooms">Rooms</a></li>
+                <li><a href="/service">Services</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/location">Location</a></li>
+
+                {% if session.user_id %}
+                    <li><a href="/dashboard" class="btn">Welcome, {{ session.first_name }}</a></li>
+                    <li><a href="/logout" class="btn logout-btn">Logout</a></li>
+                {% else %}
+                    <li><a href="/login" class="btn">Login</a></li>
+                    <li><a href="/signup" class="btn signup-btn">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <section class="services">
+        <h1>Our Premium Services</h1>
+        <div class="service-list">
+            <div class="service">
+                <img src="images/placeholder.jpg" alt="Luxury Accommodations">
+                <div class="service-text">
+                    <h2>Luxury Accommodations</h2>
+                    <p>Experience comfort and elegance in our well-appointed rooms and suites.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="images/placeholder.jpg" alt="Spa & Wellness">
+                <div class="service-text">
+                    <h2>Spa & Wellness</h2>
+                    <p>Rejuvenate with world-class spa treatments and wellness programs.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="images/placeholder.jpg" alt="Fine Dining">
+                <div class="service-text">
+                    <h2>Fine Dining</h2>
+                    <p>Indulge in gourmet meals prepared by our top chefs.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="images/placeholder.jpg" alt="Conference & Events">
+                <div class="service-text">
+                    <h2>Conference & Events</h2>
+                    <p>Host your meetings and events with our state-of-the-art facilities.</p>
+                </div>
+            </div>
+            <div class="service">
+                <img src="images/placeholder.jpg" alt="24/7 Concierge">
+                <div class="service-text">
+                    <h2>24/7 Concierge</h2>
+                    <p>Enjoy personalized assistance any time of the day.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Nami Hub. All rights reserved.</p>
+    </footer>
+</body>
+</html>

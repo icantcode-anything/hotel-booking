@@ -1,0 +1,300 @@
+/* Reset & base styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+}
+
+/* Header / Navbar */
+header {
+    background-color: white;
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container img {
+    height: 100px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ff6600;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ff6600;
+    transition: width 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #ff6600;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
+
+
+/* Navbar Buttons */
+header nav .btn,
+header nav .signup-btn,
+header nav .logout-btn {
+    background-color: #ffffff;
+    /* color: black; */
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: background 0.3s ease, color 0.3s ease;
+    border: none;
+}
+
+header nav .btn:hover,
+header nav .signup-btn:hover,
+header nav .logout-btn:hover {
+    /* background-color: #e65c00; */
+    color: #ff6600;
+}
+
+/* Login Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+}
+
+.login-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    text-align: center;
+    color: #ff6600;
+    margin-bottom: 1.5rem;
+}
+
+.login-form label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.login-form .btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-form .btn:hover {
+    background-color: #e65c00;
+    transform: scale(1.03);
+}
+
+.signup-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.signup-link a {
+    color: #ff6600;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Signup Container */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+.signup-box {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.signup-box h2 {
+    margin-bottom: 1rem;
+    color: #ff6600;
+    font-size: 28px;
+}
+
+.signup-box p {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+.name-fields {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.name-fields input {
+    flex: 1;
+}
+
+.signup-form input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.signup-form .signup-btn {
+    background-color: #ff6600;
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.signup-form .signup-btn:hover {
+    background-color: #e65c00;
+    transform: scale(1.03);
+}
+
+.login-link {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #ff6600;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+.password-container {
+    position: relative;
+}
+
+#password {
+    padding-right: 30px; /* Give space for the eye icon */
+}
+
+#toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: #ff6600;
+    color: white;
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+/* Flash Message Modal */
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header,
+.modal-footer {
+    background-color: #f4f4f4;
+}
+
+.alert {
+    margin-bottom: 0;
+}
